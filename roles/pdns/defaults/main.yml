@@ -1,0 +1,6 @@
+---
+# defaults file for pdns
+pdns_config: /etc/pdns/pdns.conf
+pdns_config_dir: /etc/pdns
+pdns_db_dir: /var/lib/pdns
+pdns_db: pdns.sqlite3

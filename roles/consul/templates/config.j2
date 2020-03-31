@@ -1,0 +1,32 @@
+{
+  "bind_addr": "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}",
+  "node_name": "{{{ ansible_hostname }}",
+  "datacenter": "{{ datacenter }}",
+  "dns_config": {
+    "enable_truncate": true
+  },
+  "ports": {
+    "dns": {{ consul_addresses_dns | default(8623) }},
+    "http": {{ consul_ports_https | default(8500) }},
+    "https": {{ consul_ports_https | default("-1") }},
+    "serf_lan": {{ consul_ports_serf_lan | default(8323) }},
+    "serf_wan": {{ consul_ports_serf_wan | default(8302) }},
+    "server": {{ consul_ports_server | default(8300) }}
+  },
+  "domain": "{{ consul_domain | default("consul") }}",
+  "log_level": "ERR",
+  "server": {{ consul_agent_mode | default("false") }},
+  "primary_datacenter": "{{ consul_primary_dc | default("dc") }}",
+  "acl": {
+    "enabled": true,
+    "token_ttl": "10s",
+    "policy_ttl": "10s",
+    "role_ttl": "10s",
+    "down_policy": "extend-cache"
+  },
+  "autopilot": {
+    "disable_upgrade_migration": true,
+    "cleanup_dead_servers": true
+  },
+  "encrypt": "{{ consul_encryption }}",
+}

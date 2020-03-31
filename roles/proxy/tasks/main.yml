@@ -1,0 +1,53 @@
+---
+# tasks file for proxy
+- name: install binary
+  get_url:
+    url: "{{ microproxy.binary_url }}"
+    dest: "{{ microproxy.binary_path }}"
+    mode: 511
+
+- name: install systemd unit
+  template:
+    src: microproxy.service
+    dest: /etc/systemd/system/microproxy.service
+    mode: 644
+    owner: root
+  notify:
+    - reload_systemd
+
+- name: create config dirs
+  file:
+    path: "{{ microproxy.config_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: install microproxy config
+  template:
+    src: microproxy_config.toml
+    dest: "{{ microproxy.config_dir }}/config.toml"
+    mode: 644
+    owner: root
+  notify:
+    - reload_microproxy
+
+- name: install microproxy auth file
+  template:
+    src: microproxy_auth
+    dest: "{{ microproxy.config_dir }}/auth"
+    mode: 644
+    owner: root
+  notify:
+    - reload_microproxy
+
+- name: start service
+  systemd:
+    name: microproxy
+    enabled: yes
+    state: started
+
+- name: firewall settings
+  firewalld:
+    port: "{{ microproxy.port }}/tcp"
+    permanent: yes
+    state: enabled
+    immediate: yes

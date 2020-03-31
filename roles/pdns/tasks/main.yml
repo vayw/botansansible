@@ -1,0 +1,66 @@
+---
+- name: install system tools
+  dnf:
+    name: "libselinux-python,python3-firewall"
+    state: present
+
+- name: install PowerDNS
+  dnf:
+    name: "pdns,pdns-tools,pdns-backend-sqlite,sqlite,libselinux-python"
+    state: present
+  notify:
+    - reload_systemd
+
+- name: create data directory
+  file:
+    path: "{{ pdns_db_dir }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: check pdns config dir presens
+  file:
+    path: "{{ pdns_config_dir }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: render pdns config
+  template:
+    src: pdns.conf.j2
+    dest: "{{ pdns_config }}"
+    owner: root
+    group: root
+    mode: '0755'
+  notify:
+    reload_pdns
+
+- name: check sqlite file exists
+  stat:
+    path: "{{ pdns_db_dir }}/{{pdns_db}}"
+  register: db_present
+
+- name: copy sqlite setup file
+  copy:
+    src: sqlite_setup.sql
+    dest: /root/pdns_sqlite3_setup.sql
+  when:
+    db_present.stat.exists == False
+
+- name: create db
+  shell: "sqlite3  {{ pdns_db_dir }}/{{pdns_db}} < /root/pdns_sqlite3_setup.sql"
+  when:
+    db_present.stat.exists == False
+
+- name: enable access to dns
+  firewalld:
+    service: dns
+    permanent: yes
+    state: enabled
+
+- name: enable pdns
+  systemd:
+    name: pdns
+    enabled: yes

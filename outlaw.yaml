@@ -1,0 +1,7 @@
+---
+- hosts: pet
+  roles:
+    - proxy
+  vars:
+    auth:
+      - "proxy:$apr1$QnLWc8OQ$4UkxjN/W54fjSpK.02jmr1"

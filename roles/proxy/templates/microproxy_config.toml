@@ -1,0 +1,3 @@
+listen="{{ microproxy.ip|default("0.0.0.0") }}:{{ microproxy.port }}"
+auth_file="{{ microproxy.config_dir }}/auth"
+auth_type="basic"

@@ -1,0 +1,6 @@
+launch=gsqlite3
+gsqlite3-database={{ pdns_db_dir}}/{{ pdns_db }}
+api=yes
+api-key={{ pdns_api_key | default("DUMMYKEY") }}
+webserver=yes
+webserver-address={{ pdbs_web_address | default("127.0.0.1") }}

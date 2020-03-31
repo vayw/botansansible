@@ -1,0 +1,7 @@
+---
+# vars file for proxy
+microproxy:
+  binary_url: http://pet.jzzy.ru/microproxy
+  port: 10111
+  config_dir: /etc/microproxy
+  binary_path: /opt/microproxy
